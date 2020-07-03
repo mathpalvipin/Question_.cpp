@@ -1,0 +1,57 @@
+<<?php 
+ header('Access-Control-Allow-Origin: *');
+  header('Content-Type: application/json');
+
+ 
+
+
+
+  include_once '../../config/Database.php';
+  include_once '../../Model/order_line.php';
+ 
+
+  // Instantiate DB & connect
+  $database = new Database();
+  $db = $database->connect();
+
+  // Instantiate blog post object
+  $order_line= new order_line($db);
+
+  // Blog post query
+  $result = $order_line->read();
+  // Get row count
+  $num = $result->rowCount();
+
+  // Check if any posts
+  if($num > 0) {
+    // Post array
+    $posts_arr = array();
+    // $posts_arr['data'] = array();
+
+    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+      extract($row);
+
+      $post_item = array(
+        'product' => $product,
+        'amount' => $amount
+       
+       
+       
+      );
+
+      // Push to "data"
+      array_push($posts_arr, $post_item);
+      // array_push($posts_arr['data'], $post_item);
+    }
+
+    // Turn to JSON & output
+    echo json_encode($posts_arr);
+
+  } else {
+    // No Posts
+    echo json_encode(
+      array('message' => 'No order_line Found')
+    );
+  }
+
+ ?>
